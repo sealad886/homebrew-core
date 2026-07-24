@@ -266,7 +266,14 @@ class Glibc < Formula
 
       system "../configure", *args, "CFLAGS=#{cflags}"
       system "make", "all"
-      system "make", "check", *xfail_tests if build.bottle?
+      begin
+        system "make", "check", *xfail_tests if build.bottle?
+      ensure
+        # add failing tests to log artifact
+        logs.install Dir["rt/tst-bz28213*"]
+        logs.install Dir["rt/tst-mqueue*"]
+        logs.install Dir["stdlib/tst-realpath-toolong*"]
+      end
       system "make", "install", "localedir=#{share}/locale"
       prefix.install_symlink "lib" => "lib64"
     end
