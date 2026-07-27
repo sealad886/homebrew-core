@@ -1,0 +1,24 @@
+name: Commit Style
+
+on: pull_request_target
+
+permissions: {}
+
+jobs:
+  check-commit-format:
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      statuses: write
+    steps:
+      - name: Check commit format
+        uses: Homebrew/actions/check-commit-format@ai-attribution-review-policy
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          check_package_commit_format: >-
+            ${{
+              github.actor != 'BrewTestBot' &&
+              !contains(github.event.pull_request.labels.*.name, 'CI-published-bottle-commits')
+            }}
